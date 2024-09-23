@@ -3,7 +3,7 @@ from tqdm import tqdm
 import cv2
 import os
 import imutils
-
+import sys
 
 
 def crop_img(img):
@@ -35,10 +35,26 @@ def crop_img(img):
 	return new_img
 	
 if __name__ == "__main__":
-	training = "dataset/Training"
-	testing = "dataset/Testing"
+	training = os.getcwd() + "/brain-data/Training"
+
+	if not os.path.exists(training):
+		print(f"Directory not found: {training}")
+		sys.exit()
+	else:
+		print(f"Successfully read the training set {training}")
+
+	testing = os.getcwd() + "/brain-data/Testing"
+
+	if not os.path.exists(testing):
+		print(f"Directory not found: {testing}")
+		sys.exit()
+	else:
+		print(f"Successfully read testing set {testing}")
+
 	training_dir = os.listdir(training)
 	testing_dir = os.listdir(testing)
+
+	print(training_dir, testing_dir)
 	IMG_SIZE = 256
 
 	for dir in training_dir:
