@@ -2,10 +2,11 @@
 
 import { useState, ChangeEvent } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Upload, Brain } from "lucide-react"
+import Image from "next/image"
 
 export function BrainTumorClassifierComponent() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
@@ -20,18 +21,28 @@ export function BrainTumorClassifierComponent() {
       }
       reader.readAsDataURL(file)
     }
-    const url = process.env.ROOT_URL || ''
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({image: file})
-    
-  });
-    if(!response.ok){
-      setMessage("Error processing the message, please try again.")
-    }
+    const formData = new FormData()
+    formData.append('image', file || '');
+    try {
+      const url =  'http://localhost:8000' + '/predict/' || ''
+      console.log(url)
+      const response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({image: file})
+      
+    });
+      if(!response.ok){
+        setMessage("Error processing the message, please try again.")
+      }
+  
+      const data = await response.json()
+      setMessage(`The image corresponds to ${data}`)
 
-    const data = await response.json()
-    setMessage(`The image corresponds to ${data}`)
+    } catch (error){
+      console.log(error)
+      console.log("There was an error processing your request")
+    }
+   
   }
   return (
     <div className="min-h-screen flex flex-col">
@@ -75,7 +86,7 @@ export function BrainTumorClassifierComponent() {
               </div>
               {selectedImage && (
                 <div className="mt-4">
-                  <img src={selectedImage} alt="Uploaded MRI Scan" className="max-w-full h-auto mx-auto rounded-lg" />
+                  <Image src={selectedImage} alt="Uploaded MRI Scan" className="max-w-full h-auto mx-auto rounded-lg" width={45} height={45}/>
                 </div>
               )}
               <Button className="w-full" type="submit">

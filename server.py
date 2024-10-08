@@ -2,8 +2,17 @@ from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 from handle_upload import process_image, generate_model
 import numpy as np
+from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
+origins = [
+    'http://localhost:3000'
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins
+)
 
 class Image(BaseModel):
     image: bytes ##takes in the image to be analyzed
